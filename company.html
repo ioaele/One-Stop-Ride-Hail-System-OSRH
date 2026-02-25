@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>One-Stop Ride-Hail | Company Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+  <header class="navbar">
+    <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+    <div class="nav-right">
+      <nav class="nav-links">
+        <a href="company_request.html" class="nav-link">
+          Add vehicles
+        </a>
+      </nav>
+      <div class="profile-text">
+        <span class="profile-label">Welcome</span>
+        <span class="profile-username" id="navbar-username"></span>
+        <a href="logout.php" class="logout-link">Logout</a>
+      </div>
+    </div>
+  </header>
+
+
+    <section class="hero-card">
+      <h1 class="hero-title">
+        Welcome back, <span id="hero-username">User</span>! 
+        Thank you for working with us!
+      </h1>
+    </section>
+
+
+    <section class="vehicles-section">
+      <h2>Your Approved Vehicles</h2>
+      <div id="vehicles-container">
+        <p class="loading">Loading vehicles...</p>
+      </div>
+    </section>
+
+
+    <section class="location-section">
+      <h2>Update Vehicle Location</h2>
+      <p>Type the vehicle license plate and update its current location. You can also use the device's current location.</p>
+      
+     
+      <button type="button" class="btn-geolocation" id="btn-get-location">
+        Use Vehicle's Current Location
+      </button>
+      
+      <form class="location-form" id="location-form">
+        <div class="form-group">
+          <label for="license_plate">License Plate:</label>
+          <input type="text" id="license_plate" name="license_plate" placeholder="e.g., ABC123" required>
+        </div>
+
+        <div class="form-group">
+          <label for="latitude">Latitude:</label>
+          <input type="number" id="latitude" name="latitude" step="any" min="-90" max="90" placeholder="e.g., 35.1667" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="longitude">Longitude:</label>
+          <input type="number" id="longitude" name="longitude" step="any" min="-180" max="180" placeholder="e.g., 33.3667" required>
+        </div>
+        
+        <button type="submit" class="btn-update" id="btn-update-location">
+          Update Location
+        </button>
+      </form>
+      
+      <div id="location-message"></div>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      loadVehicles();
+      setupLocationForm();
+      setupGeolocation();
+    });
+
+    function loadVehicles() {
+      const container = document.getElementById('vehicles-container');
+
+      fetch('getCompanyVehicles.php')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('HTTP error ' + response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.status === 'success') {
+            if (data.vehicles && data.vehicles.length > 0) {
+              let tableHTML = `
+                <table class="vehicles-table">
+                  <thead>
+                    <tr>
+                      <th>License Plate</th>
+                      <th>Vehicle Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+              `;
+              data.vehicles.forEach(vehicle => {
+                tableHTML += `
+                  <tr>
+                    <td>${escapeHtml(vehicle.license_plate)}</td>
+                    <td>${escapeHtml(vehicle.vehicle_type)}</td>
+                  </tr>
+                `;
+              });
+              tableHTML += `
+                  </tbody>
+                </table>
+                <p style="color: #666; font-size: 13px;">Total approved vehicles: ${data.vehicles.length}</p>
+              `;
+              container.innerHTML = tableHTML;
+            } else {
+              container.innerHTML = '<p class="no-vehicles">No approved vehicles found. Submit your vehicles for approval first.</p>';
+            }
+          } else {
+            container.innerHTML = `<p class="message error">${data.message || 'Failed to load vehicles'}</p>`;
+          }
+        })
+        .catch(error => {
+          console.error('Error loading vehicles:', error);
+          container.innerHTML = '<p class="message error">Connection error. Please try again later.</p>';
+        });
+    }
+
+    
+    function setupLocationForm() {
+      const form = document.getElementById('location-form');
+      const messageDiv = document.getElementById('location-message');
+      const submitBtn = document.getElementById('btn-update-location');
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const licensePlate = document.getElementById('license_plate').value.trim();
+        const latitude = parseFloat(document.getElementById('latitude').value);
+        const longitude = parseFloat(document.getElementById('longitude').value);
+
+        if (!licensePlate) {
+          showMessage(messageDiv, 'Please type a license plate.', 'error');
+          return;
+        }
+
+        if (isNaN(latitude) || isNaN(longitude)) {
+          showMessage(messageDiv, 'Please enter valid coordinates.', 'error');
+          return;
+        }
+
+        if (latitude < -90 || latitude > 90) {
+          showMessage(messageDiv, 'Latitude must be between -90 and 90.', 'error');
+          return;
+        }
+
+        if (longitude < -180 || longitude > 180) {
+          showMessage(messageDiv, 'Longitude must be between -180 and 180.', 'error');
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Updating...';
+
+        fetch('updateVehicleLocation.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            license_plate: licensePlate,
+            latitude: latitude,
+            longitude: longitude
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            showMessage(messageDiv, `✓ ${data.message}`, 'success');
+          } else {
+            showMessage(messageDiv, data.message || 'Failed to update location.', 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error updating location:', error);
+          showMessage(messageDiv, 'Connection error. Please try again later.', 'error');
+        })
+        .finally(() => {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Update Location';
+        });
+      });
+    }
+
+ 
+    function setupGeolocation() {
+      const btn = document.getElementById('btn-get-location');
+      const latInput = document.getElementById('latitude');
+      const lngInput = document.getElementById('longitude');
+      const messageDiv = document.getElementById('location-message');
+      
+      btn.addEventListener('click', function() {
+        if (!navigator.geolocation) {
+          showMessage(messageDiv, 'Geolocation is not supported by your browser.', 'error');
+          return;
+        }
+        
+        btn.disabled = true;
+        btn.textContent = 'Getting location...';
+        
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            latInput.value = position.coords.latitude.toFixed(6);
+            lngInput.value = position.coords.longitude.toFixed(6);
+            showMessage(messageDiv, 'Location retrieved successfully!', 'success');
+            btn.disabled = false;
+            btn.textContent = 'Use Device\'s Current Location';
+          },
+          function(error) {
+            let errorMessage = 'Unable to get location.';
+            switch(error.code) {
+              case error.PERMISSION_DENIED:
+                errorMessage = 'Location permission denied.';
+                break;
+              case error.POSITION_UNAVAILABLE:
+                errorMessage = 'Location information unavailable.';
+                break;
+              case error.TIMEOUT:
+                errorMessage = 'Location request timed out.';
+                break;
+            }
+            showMessage(messageDiv, errorMessage, 'error');
+            btn.disabled = false;
+            btn.textContent = 'Use Device\'s Current Location';
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
+      });
+    }
+
+    function showMessage(element, message, type) {
+      element.innerHTML = `<div class="message ${type}">${message}</div>`;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+
+  <script src="homepage_pas.js"></script>
+</body>
+</html>

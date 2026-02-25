@@ -1,0 +1,214 @@
+<head>
+  <meta charset="UTF-8" />
+  <title>Driver Request | OSRH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="navbar">
+    <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+    <div class="profile-text">
+      <span class="profile-label">Welcome</span>
+      <span class="profile-username" id="navbar-username"></span>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">
+        Request to be a Driver
+      </h1>
+
+      <form id="driverVehicleForm">
+
+        <section class="form-section">
+          <h2>Driver Documents</h2>
+
+          <div class="form-row">
+            <label for="driver_picture">Driver Picture</label>
+            <input type="file" id="driver_picture" name="driver_picture" accept="image/*" required>
+            <small style="color: red; display: block; margin-top: 5px;">Maximum 2MB</small>
+          </div>
+          
+          <div class="form-row">
+            <label>
+              <input type="checkbox" id="is_eu_resident" checked>
+              I am a permanent EU resident 
+            </label>
+          </div>
+
+          
+          <div class="doc-block" data-required-doc="true">
+            <h3>ID / Passport</h3>
+            <input type="hidden" name="driver_docs[0][d_doc_type]" value="7">
+
+            <div class="form-row">
+              <label for="id_doc_code">Document Code</label>
+              <input type="text" id="id_doc_code" name="driver_docs[0][doc_code]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="id_doc_publish">Issue Date</label>
+              <input type="date" id="id_doc_publish" name="driver_docs[0][d_doc_publish_date]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="id_doc_exp">Expiration Date</label>
+              <input type="date" id="id_doc_exp" name="driver_docs[0][d_doc_ex_date]">
+            </div>
+
+            <div class="form-row">
+              <label for="id_doc_file">File (image/pdf)</label>
+              <input type="file" id="id_doc_file" name="driver_docs[0][image_pdf]" accept=".pdf,image/*" required>
+              <small style="color: red; display: block; margin-top: 5px;">Maximum 2MB</small>
+            </div>
+          </div>
+
+          
+          <div class="doc-block" id="residence-permit-block">
+            <h3>Residence Permit</h3>
+            <input type="hidden" name="driver_docs[1][d_doc_type]" value="8">
+
+            <div class="form-row">
+              <label for="res_permit_code">Document Code</label>
+              <input type="text" id="res_permit_code" name="driver_docs[1][doc_code]">
+            </div>
+
+            <div class="form-row">
+              <label for="res_permit_publish">Issue Date</label>
+              <input type="date" id="res_permit_publish" name="driver_docs[1][d_doc_publish_date]">
+            </div>
+
+            <div class="form-row">
+              <label for="res_permit_exp">Expiration Date</label>
+              <input type="date" id="res_permit_exp" name="driver_docs[1][d_doc_ex_date]">
+            </div>
+
+            <div class="form-row">
+              <label for="res_permit_file">File (image/pdf)</label>
+              <input type="file" id="res_permit_file" name="driver_docs[1][image_pdf]" accept=".pdf,image/*">
+              <small style="color: red; display: block; margin-top: 5px;">Maximum 2MB</small>
+            </div>
+          </div>
+
+          
+          <div class="doc-block" data-required-doc="true">
+            <h3>Driving License</h3>
+            <input type="hidden" name="driver_docs[2][d_doc_type]" value="9">
+
+            <div class="form-row">
+              <label for="dl_code">Document Code</label>
+              <input type="text" id="dl_code" name="driver_docs[2][doc_code]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="dl_publish">Issue Date</label>
+              <input type="date" id="dl_publish" name="driver_docs[2][d_doc_publish_date]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="dl_exp">Expiration Date</label>
+              <input type="date" id="dl_exp" name="driver_docs[2][d_doc_ex_date]">
+            </div>
+
+            <div class="form-row">
+              <label for="dl_file">File (image/pdf)</label>
+              <input type="file" id="dl_file" name="driver_docs[2][image_pdf]" accept=".pdf,image/*" required>
+              <small style="color: red; display: block; margin-top: 5px;">Maximum 2MB</small>
+            </div>
+          </div>
+
+          
+          <div class="doc-block" data-required-doc="true">
+            <h3>Criminal Record Certificate</h3>
+            <small>Must not be older than 1 month.</small>
+            <input type="hidden" name="driver_docs[3][d_doc_type]" value="10">
+
+            <div class="form-row">
+              <label for="cr_code">Document Code</label>
+              <input type="text" id="cr_code" name="driver_docs[3][doc_code]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="cr_publish">Issue Date</label>
+              <input type="date" id="cr_publish" name="driver_docs[3][d_doc_publish_date]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="cr_file">File (image/pdf)</label>
+              <input type="file" id="cr_file" name="driver_docs[3][image_pdf]" accept=".pdf,image/*" required>
+              <small style="color: red; display: block; margin-top: 5px;">Maximum 2MB</small>
+            </div>
+          </div>
+
+          
+          <div class="doc-block" data-required-doc="true">
+            <h3>Medical Certificate</h3>
+            <input type="hidden" name="driver_docs[4][d_doc_type]" value="11">
+
+            <div class="form-row">
+              <label for="med_code">Document Code</label>
+              <input type="text" id="med_code" name="driver_docs[4][doc_code]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="med_publish">Issue Date</label>
+              <input type="date" id="med_publish" name="driver_docs[4][d_doc_publish_date]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="med_exp">Expiration Date</label>
+              <input type="date" id="med_exp" name="driver_docs[4][d_doc_ex_date]">
+            </div>
+
+            <div class="form-row">
+              <label for="med_file">File (image/pdf)</label>
+              <input type="file" id="med_file" name="driver_docs[4][image_pdf]" accept=".pdf,image/*" required>
+              <small style="color: red; display: block; margin-top: 5px;">Maximum 2MB</small>
+            </div>
+          </div>
+
+          
+          <div class="doc-block" data-required-doc="true">
+            <h3>Psychological Certificate</h3>
+            <input type="hidden" name="driver_docs[5][d_doc_type]" value="12">
+
+            <div class="form-row">
+              <label for="psy_code">Document Code</label>
+              <input type="text" id="psy_code" name="driver_docs[5][doc_code]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="psy_publish">Issue Date</label>
+              <input type="date" id="psy_publish" name="driver_docs[5][d_doc_publish_date]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="psy_exp">Expiration Date</label>
+              <input type="date" id="psy_exp" name="driver_docs[5][d_doc_ex_date]">
+            </div>
+
+            <div class="form-row">
+              <label for="psy_file">File (image/pdf)</label>
+              <input type="file" id="psy_file" name="driver_docs[5][image_pdf]" accept=".pdf,image/*" required>
+              <small style="color: red; display: block; margin-top: 5px;">Maximum 2MB</small>
+            </div>
+          </div>
+        </section> 
+
+        <button type="button" id="submitBtn">
+          Continue
+        </button>
+        
+        <div id="alert">
+          <span id="alert-text"></span>
+        </div>
+
+      </form>
+    </section>
+  </main>
+  
+  <script src="driver_doc_request.js"></script>
+</body>
+</html>

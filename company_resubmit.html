@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Resubmit Documents | OSRH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <header class="navbar">
+    <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+    <div class="profile-text">
+      <span class="profile-label">Welcome</span>
+      <span class="profile-username" id="navbar-username"></span>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">Resubmit Vehicle Documents</h1>
+      
+      <div id="loading-message" style="text-align: center; padding: 20px;">
+        <p>Loading documents that need correction...</p>
+      </div>
+
+      <div id="no-docs-message" style="display: none; text-align: center; padding: 20px; color: green;">
+        <p>All documents are approved or pending! No resubmission needed.</p>
+        <button onclick="window.location.href='homepage_pas.html'">Return to Homepage</button>
+      </div>
+
+      <form id="resubmitForm" style="display: none;">
+        <input type="hidden" id="vehicle_id" name="vehicle_id">
+
+        <div class="info-box" style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 15px; margin-bottom: 20px; border-radius: 5px;">
+          <strong>⚠️ Important:</strong> The following documents need to be corrected and resubmitted.
+          Please update the required information and upload new files.
+        </div>
+
+        <section class="form-section" id="docs-container">
+          <!-- Documents will be dynamically loaded here -->
+        </section>
+
+        <button type="button" id="submitBtn">
+          Resubmit Documents
+        </button>
+        
+        <div id="alert" style="display: none; margin-top: 15px; padding: 10px; border-radius: 5px;">
+          <span id="alert-text"></span>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="company_resubmit_docs.js"></script>
+
+</body>
+</html>

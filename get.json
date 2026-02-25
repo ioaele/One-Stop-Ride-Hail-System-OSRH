@@ -1,0 +1,18 @@
+
+function getrequests(){
+    
+    var xhr = new XMLHttpRequest();
+  
+    xhr.onreadystatechange = function () {
+    if (xhr.readyState !== 4) return;
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const logsresp=JSON.parse(xhr.responseText);
+        ShowLogs(logsresp);
+  
+      } else {
+        console.log('error', xhr);
+      }
+    };
+    xhr.open('GET', 'PHP/php.php');
+    xhr.send();
+  }
