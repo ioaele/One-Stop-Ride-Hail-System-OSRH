@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Confirm Ride | OSRH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .confirmation-card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #666;
+    }
+
+    .info-value {
+      color: #333;
+    }
+
+    .price-box {
+      background: #f0f8ff;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .price-amount {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #0066ff;
+    }
+
+    .confirm-btn {
+      width: 100%;
+      background: #0066ff;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .confirm-btn:hover {
+      background: #004bcc;
+    }
+
+    .confirm-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .back-btn {
+      width: 100%;
+      background: #f5f5f5;
+      color: #333;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+
+    .error-message {
+      background: #fee;
+      color: #c33;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .success-message {
+      background: #efe;
+      color: #3c3;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+<header class="navbar">
+  <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+  <div class="profile-text">
+    <span class="profile-label">Welcome</span>
+    <span class="profile-username" id="navbar-username"></span>
+  </div>
+</header>
+
+<main class="main">
+  <section class="hero-card">
+    <h1 class="hero-title">Confirm Your Ride</h1>
+
+    <div id="message-area"></div>
+
+    <div class="confirmation-card">
+      <h2>Ride Details</h2>
+      
+      <div class="info-row">
+        <span class="info-label">Service:</span>
+        <span class="info-value" id="service-name">-</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Ride Type:</span>
+        <span class="info-value" id="service-type">-</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Vehicle Type:</span>
+        <span class="info-value" id="vehicle-type">-</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Pickup:</span>
+        <span class="info-value" id="pickup-address">Loading...</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Dropoff:</span>
+        <span class="info-value" id="dropoff-address">Loading...</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">Distance:</span>
+        <span class="info-value" id="distance">-</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-label">ETA:</span>
+        <span class="info-value" id="eta">-</span>
+      </div>
+    </div>
+
+    <div class="price-box">
+      <div style="font-size: 14px; color: #666; margin-bottom: 5px;">Estimated Price</div>
+      <div class="price-amount" id="price">€0.00</div>
+    </div>
+
+    <button class="confirm-btn" id="confirm-btn" onclick="confirmRide()">
+      Confirm and Request Ride
+    </button>
+
+    <button class="back-btn" onclick="goBack()">
+      Go Back
+    </button>
+
+  </section>
+</main>
+
+<script>
+  // Load stored data
+  const usersId        = localStorage.getItem("users_id");
+  const service        = localStorage.getItem("selected_service");
+  const serviceId      = localStorage.getItem("selected_service_id");
+  const serviceType    = localStorage.getItem("selected_service_type");
+  const serviceTypeId  = localStorage.getItem("selected_service_type_id");
+  const vehicleTypeId  = localStorage.getItem("selected_vehicle_type_id");
+  const pickupLat      = parseFloat(localStorage.getItem("pickup_lat"));
+  const pickupLng      = parseFloat(localStorage.getItem("pickup_lng"));
+  const dropoffLat     = parseFloat(localStorage.getItem("dropoff_lat"));
+  const dropoffLng     = parseFloat(localStorage.getItem("dropoff_lng"));
+
+  // Display basic info
+  document.getElementById("service-name").textContent = service || "N/A";
+  document.getElementById("service-type").textContent = serviceType || "N/A";
+
+  // Calculate distance
+  function calculateDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371; // Earth's radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+              Math.sin(dLng/2) * Math.sin(dLng/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  // Calculate price and ETA
+  const distance = calculateDistance(pickupLat, pickupLng, dropoffLat, dropoffLng);
+  const estimatedPrice = (3 + distance * 1.5).toFixed(2);
+  const eta = Math.max(5, Math.floor((distance / 40) * 60)); // 40 km/h average
+
+  document.getElementById("distance").textContent = distance.toFixed(2) + " km";
+  document.getElementById("eta").textContent = eta + " min";
+  document.getElementById("price").textContent = "€" + estimatedPrice;
+
+  // Get vehicle type name
+  async function getVehicleTypeName() {
+    try {
+      const response = await fetch("get_vehicle_type_name.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vehicle_type_id: vehicleTypeId })
+      });
+      const data = await response.json();
+      if (data.status === 'success') {
+        document.getElementById("vehicle-type").textContent = data.name;
+      }
+    } catch (error) {
+      console.error('Error getting vehicle type:', error);
+    }
+  }
+
+  // Reverse geocoding
+  async function getAddress(lat, lng) {
+    try {
+      const response = await fetch(`reverse_geocode.php?lat=${lat}&lng=${lng}`);
+      const data = await response.json();
+      return data.success ? data.address : `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;
+    } catch (error) {
+      return `${lat.toFixed(4)}°, ${lng.toFixed(4)}°`;
+    }
+  }
+
+  // Load addresses
+  async function loadAddresses() {
+    const pickupAddress = await getAddress(pickupLat, pickupLng);
+    const dropoffAddress = await getAddress(dropoffLat, dropoffLng);
+    
+    document.getElementById("pickup-address").textContent = pickupAddress;
+    document.getElementById("dropoff-address").textContent = dropoffAddress;
+  }
+
+  // Confirm ride
+  async function confirmRide() {
+    const btn = document.getElementById("confirm-btn");
+    const messageArea = document.getElementById("message-area");
+    
+    // Validate
+    if (!usersId || !serviceId || !serviceTypeId || !vehicleTypeId) {
+      messageArea.innerHTML = '<div class="error-message">Missing required information. Please start over.</div>';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Creating ride request...";
+    messageArea.innerHTML = '';
+
+    try {
+      // Step 1: Create pickup point
+      btn.textContent = "Creating pickup point...";
+      const pickupResponse = await fetch("create_point.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          latitude: pickupLat,
+          longitude: pickupLng
+        })
+      });
+      const pickupData = await pickupResponse.json();
+      
+      if (pickupData.status !== 'success') {
+        throw new Error('Failed to create pickup point: ' + pickupData.message);
+      }
+      
+      const pickupPointId = pickupData.point_id;
+
+      // Step 2: Create dropoff point
+      btn.textContent = "Creating dropoff point...";
+      const dropoffResponse = await fetch("create_point.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          latitude: dropoffLat,
+          longitude: dropoffLng
+        })
+      });
+      const dropoffData = await dropoffResponse.json();
+      
+      if (dropoffData.status !== 'success') {
+        throw new Error('Failed to create dropoff point: ' + dropoffData.message);
+      }
+      
+      const dropoffPointId = dropoffData.point_id;
+
+      // Step 3: Create ride request
+      btn.textContent = "Requesting ride from drivers...";
+      const response = await fetch("create_ride_request_simple.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          users_id: parseInt(usersId),
+          service_id: parseInt(serviceId),
+          service_type_id: parseInt(serviceTypeId),
+          vehicle_type_id: parseInt(vehicleTypeId),
+          pickup_point_id: pickupPointId,
+          dropoff_point_id: dropoffPointId,
+          estimated_price: parseFloat(estimatedPrice)
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'success') {
+        messageArea.innerHTML = `
+          <div class="success-message">
+            <strong>✓ Success!</strong><br>
+            ${data.message}<br><br>
+            <strong>Ride ID:</strong> ${data.ride_id}<br>
+            <strong>Status:</strong> ${data.ride_status}<br><br>
+            Redirecting to ride tracking...
+          </div>
+        `;
+        
+        // Store ride_id for tracking
+        localStorage.setItem("current_ride_id", data.ride_id);
+        
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = "ride_tracking.html";
+        }, 2000);
+        
+      } else {
+        messageArea.innerHTML = `<div class="error-message"><strong>Error:</strong> ${data.message}</div>`;
+        btn.disabled = false;
+        btn.textContent = "Confirm and Request Ride";
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      messageArea.innerHTML = `<div class="error-message"><strong>Error:</strong> ${error.message || 'Network error. Please try again.'}</div>`;
+      btn.disabled = false;
+      btn.textContent = "Confirm and Request Ride";
+    }
+  }
+
+  function goBack() {
+    window.history.back();
+  }
+
+  // Initialize
+  loadAddresses();
+  getVehicleTypeName();
+</script>
+
+</body>
+</html>

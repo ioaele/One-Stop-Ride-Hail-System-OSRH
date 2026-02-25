@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ride hailing | OSRH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+    <div class="profile-text">
+      <span class="profile-label">Welcome</span>
+      <span class="profile-username" id="navbar-username"></span>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">Ride hailing</h1>
+      
+      <form id="taxi-form">
+        
+        <h2 class="section-title">1.How do you want to travel?</h2>
+        <div class="service-grid">
+          <label class="service-card">
+            <input type="radio" name="service" value="driver" checked>
+            <div class="service-card-body">
+             <span> Ride with Driver
+            </div>
+          </label>
+
+          <label class="service-card">
+            <input type="radio" name="service" value="teledrive">
+            <div class="service-card-body">
+           <span>Teledriving Vehicle  </span>
+            </div>
+          </label>
+
+          <label class="service-card">
+            <input type="radio" name="service" value="autonomous">
+            <div class="service-card-body">
+              <span> Fully Autonomous Vehicle</span>
+            </div>
+          </label>
+
+          <label class="service-card">
+            <input type="radio" name="service" value="mini_van">
+            <div class="service-card-body">
+              <span> Mini Van</span>
+            </div>
+          </label>
+        </div>
+
+       
+        <h2 class="section-title">2. Ride Type </h2>
+        <div class="form-group">
+          <label for="service_type">Ride Type</label>
+          <select id="service_type" name="service_type">
+            <option value="11">Standard passenger ride</option>
+            <option value="12">Premium passenger ride</option>
+            <option value="13">Light cargo transport</option>
+            <option value="14">Heavy cargo transport</option>
+            <option value="15">Multi-hop transport</option>
+            
+          </select>
+        </div>
+
+        <h2 class="section-title">3. Pickup & Dropoff</h2>
+
+        <div class="form-group">
+          <label>Click mode for map</label>
+          <div>
+            <label>
+              <input type="radio" name="clickMode" value="pickup" checked>
+              Set Pickup
+            </label>
+            &nbsp;&nbsp;
+            <label>
+              <input type="radio" name="clickMode" value="dropoff">
+              Set Dropoff
+            </label>
+          </div>
+        </div>
+
+        
+        <div class="form-group">
+          <label>Pickup Location (lat, lng)</label>
+          <input id="pickup_display" type="text" readonly placeholder="Click on the map to set pickup">
+        </div>
+
+       
+        <div class="form-group">
+          <label>Dropoff Location (lat, lng)</label>
+          <input id="dropoff_display" type="text" readonly placeholder="Click on the map to set dropoff">
+        </div>
+
+     
+        <input type="hidden" id="pickup_lat" name="pickup_lat">
+        <input type="hidden" id="pickup_lng" name="pickup_lng">
+        <input type="hidden" id="dropoff_lat" name="dropoff_lat">
+        <input type="hidden" id="dropoff_lng" name="dropoff_lng">
+
+       
+        <div id="map" style="height: 500px; width: 100%; border-radius: 8px; margin-top: 20px; margin-bottom: 10px;"></div>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+          <button type="button" class="btn-secondary" onclick="clearAllPoints()" style="flex: 1;">🗑️ Clear Points</button>
+          <button type="button" class="btn-secondary" onclick="returnToUserLocation()" style="flex: 1;">📍 My Location</button>
+        </div>
+
+        <div class="button-row">
+          <button type="submit" class="btn-primary">Continue</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
+  <!-- Leaflet JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+  <script>
+    // Filter ride type options based on selected service
+    document.addEventListener('DOMContentLoaded', () => {
+      const serviceRadios = document.querySelectorAll('input[name="service"]');
+      const serviceTypeSelect = document.getElementById('service_type');
+      
+      // Store all options
+      const allOptions = {
+        passenger: [
+          { value: '11', text: 'Standard passenger ride' },
+          { value: '12', text: 'Premium passenger ride' },
+          { value: '15', text: 'Multi-hop transport' }
+        ],
+        cargo: [
+          { value: '13', text: 'Light cargo transport' },
+          { value: '14', text: 'Heavy cargo transport' }
+        ]
+      };
+      
+      function updateRideTypeOptions() {
+        const selectedService = document.querySelector('input[name="service"]:checked').value;
+        
+        // Clear current options
+        serviceTypeSelect.innerHTML = '';
+        
+        // Add appropriate options
+        let optionsToShow = [];
+        if (selectedService === 'mini_van') {
+          // Mini van: only show cargo options
+          optionsToShow = allOptions.cargo;
+        } else {
+          // Other services: show passenger options
+          optionsToShow = allOptions.passenger;
+        }
+        
+        // Populate the select with filtered options
+        optionsToShow.forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt.value;
+          option.textContent = opt.text;
+          serviceTypeSelect.appendChild(option);
+        });
+      }
+      
+      // Update on service change
+      serviceRadios.forEach(radio => {
+        radio.addEventListener('change', updateRideTypeOptions);
+      });
+      
+      // Initialize on page load
+      updateRideTypeOptions();
+    });
+  </script>
+
+  <script src="map.js?v=7"></script>
+  <script src="taxi.js?v=7"></script>
+</body>
+</html>
+
+

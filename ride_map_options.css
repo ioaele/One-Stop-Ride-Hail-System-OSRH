@@ -1,0 +1,62 @@
+.vehicle-card {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.vehicle-card:hover {
+  transform: translateY(-3px);
+}
+
+.vehicle-info {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.vehicle-info img {
+  width: 60px;
+  height: 40px;
+  border-radius: 6px;
+  background: #ddd;
+}
+
+.choose-btn {
+  background: #0066ff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.choose-btn:hover {
+  background: #004bcc;
+}
+
+.summary-box {
+  background: #fafafa;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.address-loading {
+  color: #666;
+  font-style: italic;
+}
+
+.location-icon {
+  display: inline-block;
+  margin-right: 5px;
+}

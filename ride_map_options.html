@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Select Vehicle Type | OSRH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="ride_map_options.css">
+</head>
+
+<body>
+
+<header class="navbar">
+  <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+  <div class="profile-text">
+    <span class="profile-label">Welcome</span>
+    <span class="profile-username" id="navbar-username"></span>
+  </div>
+</header>
+
+<main class="main">
+  <section class="hero-card">
+    <h1 class="hero-title">Choose a Vehicle Type</h1>
+
+    <div class="summary-box" id="summary">
+      <strong>Service:</strong> <span id="service-name">Loading...</span><br>
+      <strong>Ride Type:</strong> <span id="ride-type">Loading...</span><br><br>
+
+      <strong>📍 Pickup:</strong> <span id="pickup-address" class="address-loading">Loading address...</span><br>
+      <strong>📍 Dropoff:</strong> <span id="dropoff-address" class="address-loading">Loading address...</span>
+    </div>
+
+    <h2 class="section-title">Available Vehicle Types</h2>
+
+    <div id="vehicle-list">
+      Loading vehicle types...
+    </div>
+
+  </section>
+</main>
+
+<script src="ride_map_options.js"></script>
+
+</body>
+</html>

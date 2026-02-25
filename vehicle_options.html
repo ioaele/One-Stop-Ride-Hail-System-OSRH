@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Available Rental Vehicles | One-Stop Ride-Hail</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="style.css">
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+</head>
+
+<body>
+  <header class="navbar">
+    <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+    <div class="website_name">One-Stop Ride-Hail</div>
+    <div class="profile-text">
+        <span class="profile-label">Welcome</span>
+        <span class="profile-username" id="navbar-username"></span>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">Available Rental Vehicles</h1>
+      <p class="hero-subtitle">Click on a marker to view vehicle details and select.</p>
+
+      <div id="map" style="height: 600px; width: 100%; border-radius: 8px;"></div>
+    </section>
+  </main>
+
+  <!-- Leaflet JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="vehicle_options.js"></script>
+</body>
+</html>

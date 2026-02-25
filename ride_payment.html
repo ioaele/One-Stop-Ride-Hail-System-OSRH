@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ride Payment & Feedback</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="main">
+    <section class="payment-card">
+      <h1>Payment for Your Ride</h1>
+      <div id="payment-details">
+        <p>Loading ride details...</p>
+      </div>
+      <form id="feedback-form" style="display:none;">
+        <h2>Leave Feedback for Your Driver</h2>
+        <label for="rating">Rating:</label>
+        <select id="rating" name="rating" required>
+          <option value="">Select</option>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Terrible</option>
+        </select>
+        <br><br>
+        <label for="comments">Comments:</label><br>
+        <textarea id="comments" name="comments" rows="4" cols="40" placeholder="Write your feedback..."></textarea>
+        <br><br>
+        <button type="submit">Submit Feedback & Pay</button>
+      </form>
+    </section>
+  </main>
+  <script>
+    // First, update the ride payment to ensure price is recalculated
+    let rideId = null;
+    fetch('get_ride_payment_details.php', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})})
+      .then(r=>r.json())
+      .then(data=>{
+        if(data.success && data.ride_id) {
+          rideId = data.ride_id;
+          // Call update_ride_payment.php to recalculate price
+          return fetch('update_ride_payment.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ride_id: rideId})
+          }).then(() => data); // Continue with the same data
+        } else {
+          throw new Error('No completed ride found.');
+        }
+      })
+      .then(data => {
+        // Fetch again to get the updated price
+        return fetch('get_ride_payment_details.php', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})})
+          .then(r=>r.json());
+      })
+      .then(data => {
+        if(data.success && data.total) {
+          document.getElementById('payment-details').innerHTML = `
+            <p><strong>Total to Pay:</strong> <span style="font-size:1.3em;color:#0066ff;">€${data.total.toFixed(2)}</span></p>
+            <p><strong>Driver:</strong> ${data.driver_name}</p>
+          `;
+          document.getElementById('feedback-form').style.display = '';
+        } else {
+          let debugMsg = '';
+          if (data.debug_output) debugMsg += `<pre style='color:#c33;background:#fee;padding:8px;'>${data.debug_output}</pre>`;
+          if (data.debug) debugMsg += `<pre style='color:#c33;background:#fee;padding:8px;'>${JSON.stringify(data.debug,null,2)}</pre>`;
+          document.getElementById('payment-details').innerHTML = `<p>Could not load payment details.</p>${debugMsg}`;
+        }
+      })
+      .catch(err => {
+        document.getElementById('payment-details').innerHTML = `<p>Error: ${err.message}</p>`;
+      });
+    // Handle feedback form submit
+    document.getElementById('feedback-form').onsubmit = function(e) {
+      e.preventDefault();
+      const rating = document.getElementById('rating').value;
+      const comments = document.getElementById('comments').value;
+      fetch('submit_ride_feedback.php', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({rating, comments})
+      })
+      .then(r=>r.json())
+      .then(data=>{
+        if(data.success) {
+          alert('Thank you for your feedback and payment!');
+          window.location.href = 'homepage_pas.html';
+        } else {
+          alert(data.message || 'Could not submit feedback.');
+        }
+      });
+    };
+  </script>
+</body>
+</html>

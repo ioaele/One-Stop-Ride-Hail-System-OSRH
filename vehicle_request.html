@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+<<<<<<< HEAD
+  <title>Add Vehicle | OSRH</title>
+=======
+  <title>Driver Request | OSRH</title>
+>>>>>>> ff1ede1e5f11d363663d8ef9fa49e1d7869c40b6
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" href="style.css">
+
+  
+  <header class="navbar">
+<<<<<<< HEAD
+    <a href="driver.html" class="OSRH">One-Stop Ride-Hail</a>
+=======
+    <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+>>>>>>> ff1ede1e5f11d363663d8ef9fa49e1d7869c40b6
+    <div class="profile-text">
+      <span class="profile-label">Welcome</span>
+      <span class="profile-username" id="navbar-username"></span>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">
+<<<<<<< HEAD
+       Add Vehicle 
+=======
+        Request to be a Driver
+>>>>>>> ff1ede1e5f11d363663d8ef9fa49e1d7869c40b6
+      </h1>
+
+      <form id="driverVehicleForm">
+        <h2>Vehicle</h2>
+
+        <label>Service Type:</label>
+        <select id="service_type" required>
+          <option value="">Select Service Type...</option>
+          <option value="11">Standard passenger ride</option>
+          <option value="12">Premium passenger ride</option>
+          <option value="13">Light household cargo</option>
+          <option value="14">Heavy household cargo</option>
+        </select>
+      
+        <label>Vehicle Type:</label>
+        <select id="vehicle_type" required>
+          <option value="">Select Vehicle Type...</option>
+          <option value="1">SUV</option>
+          <option value="5">Hatchback</option>
+          <option value="6">Minivan</option>
+          <option value="7">Electric Car</option>
+          <option value="8">Sedan</option>
+        </select>
+      
+        <label>License Plate:</label>
+        <input type="text" id="license_plate"required>
+      
+        <label>Seats:</label>
+        <input type="number" id="seats" min="1" max="50"required>
+      
+        <label>Luggage Volume (liters):</label>
+        <input type="number" id="luggage_volume" min="0"  required>
+      
+        <label>Luggage Weight (kg):</label>
+        <input type="number" id="luggage_weight" min="0"  required>
+      
+        <label>Interior Photo:</label>
+        <input type="file" id="photo_interior" accept="image/*" required>
+        <small style="color: red; display: block; margin-bottom: 15px;">Maximum 500KB (0.5MB)</small>
+      
+        <label>Exterior Photo:</label>
+        <input type="file" id="photo_exterior" accept="image/*" required>
+        <small style="color: red; display: block; margin-bottom: 15px;">Maximum 500KB (0.5MB)</small>
+      
+      </form>
+      <script src="vehicle_request.js"></script>
+      
+      <button type="button" id="submitBtn">
+        Continue
+      </button>
+    
+      </a>
+      
+      <div id="alert" >
+        <span id="alert-text"></span>
+      </div>
+
+      </form>
+    </section>
+  </main>
+
+
+
+  
+ 
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OSRH - Signup</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <link rel="stylesheet" href="style.css">
+
+<div class="container">
+   
+    <div id="alert" class="alert">
+        <span id="alert-text"></span>
+        <button type="button" onclick="document.getElementById('alert').style.display='none'">&times;</button>
+    </div>
+<div class="container">
+    <h1>Create an Account</h1>
+    <p class="subtitle">Fill in your details to register.</p>
+
+ 
+    <form id="signup-form">
+       
+        <div class="form-group">
+            <label for="last_name">Last Name *</label>
+            <input type="text" id="last_name" name="last_name" maxlength="20" required />
+        </div>
+
+       
+        <div class="form-group">
+            <label for="first_name">First Name *</label>
+            <input type="text" id="first_name" name="first_name" maxlength="30" required />
+        </div>
+
+    
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender">
+                <option value="">Select gender</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
+            </select>
+        </div>
+
+      
+        <div class="form-group">
+            <label for="datebirth">Date of Birth *</label>
+            <input type="date" id="datebirth" name="datebirth" required />
+        </div>
+
+        
+        <div class="form-group">
+            <label for="username">Username *</label>
+            <input type="text" id="username" name="username" maxlength="50" required />
+        </div>
+
+      
+        <div class="form-group">
+            <label for="password">Password *</label>
+            <input type="password" id="password" name="password_hashed" minlength="6" required />
+        </div>
+
+       
+        <div class="form-group">
+            <label for="confirm_password">Confirm Password *</label>
+            <input type="password" id="confirm_password" name="confirm_password" minlength="6" required />
+        </div>
+
+        
+        <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" maxlength="100" required />
+        </div>
+
+        
+        <div class="form-group">
+            <label for="phone_number">Phone Number *</label>
+            <input type="tel" id="phone_number" name="phone_number" maxlength="20" required />
+        </div>
+
+      
+        <div class="form-group">
+            <label for="country">Country *</label>
+            <input type="text" id="country" name="country" maxlength="30" required />
+        </div>
+
+      
+        <div class="form-group">
+            <label for="city">City *</label>
+            <input type="text" id="city" name="city" maxlength="30" required />
+        </div>
+
+     
+        <div class="form-group">
+            <label for="post_code">Post Code</label>
+            <input type="text" id="post_code" name="post_code" maxlength="15" />
+        </div>
+
+        
+        <div class="form-group">
+            <label for="street">Street *</label>
+            <input type="text" id="street" name="street" maxlength="30" required />
+        </div>
+
+        
+        <div class="form-group">
+            <label for="number">Street Number *</label>
+            <input type="text" id="number" name="number" maxlength="10" required />
+        </div>
+
+        <div class="note">
+            Fields marked with * are required. Your email, phone and username must be unique.
+        </div>
+
+        <div class="button-row">
+            <button type="submit">Sign Up</button>
+        </div>
+    </form>
+</div>
+
+
+<script src="signup.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Driver Registration</title>
+</head>
+<body>
+    <form id="driverVehicleForm" method="POST" enctype="multipart/form-data">
+        
+        <h2>Vehicle Details</h2>
+
+        <div>
+            <label for="service_type">Service Type</label>
+            <select id="service_type" name="service_type" required>
+                <option value="">Select Service Type</option>
+                <option value="11">Standard passenger ride</option>
+                <option value="12">Premium passenger ride</option>
+                <option value="13">Light household cargo</option>
+                <option value="14">Heavy household cargo</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="vehicle_type">Vehicle Type</label>
+            <select id="vehicle_type" name="vehicle_type" required>
+                <option value="">Select Vehicle Type</option>
+                <option value="1">SUV</option>
+                <option value="5">Hatchback</option>
+                <option value="6">Minivan</option>
+                <option value="7">Electric Car</option>
+                <option value="8">Sedan</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="license_plate">License Plate</label>
+            <input type="text" id="license_plate" name="license_plate" required>
+        </div>
+
+        <div>
+            <label for="seats">Seats</label>
+            <input type="number" id="seats" name="seats" min="1" max="100" required>
+        </div>
+
+        <div>
+            <label for="luggage_volume">Luggage Volume (m³)</label>
+            <input type="number" id="luggage_volume" name="luggage_volume" min="0" max="9999" required>
+        </div>
+
+        <div>
+            <label for="luggage_weight">Luggage Weight (kg)</label>
+            <input type="number" id="luggage_weight" name="luggage_weight" min="0" max="9999" required>
+        </div>
+
+        <div>
+            <label for="photo_interior">Interior Photo</label>
+            <input type="file" id="photo_interior" name="photo_interior" accept="image/*" required>
+        </div>
+
+        <div>
+            <label for="photo_exterior">Exterior Photo</label>
+            <input type="file" id="photo_exterior" name="photo_exterior" accept="image/*" required>
+        </div>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <script>
+        document.getElementById('driverVehicleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            // DEBUG
+            console.log('=== SENDING ===');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, ':', value);
+            }
+            
+            fetch('test.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(r => r.json())
+            .then(data => {
+                console.log('Response:', data);
+                alert(JSON.stringify(data, null, 2));
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Error: ' + err.message);
+            });
+        });
+    </script>
+</body>
+</html>

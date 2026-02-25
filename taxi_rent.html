@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Book a Ride | OSRH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <header class="navbar">
+    <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+    <div class="profile-text">
+      <span class="profile-label">Welcome</span>
+      <span class="profile-username" id="navbar-username"></span>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">Book a Ride
+        <a href="#" id="request-driver-link"></a>
+      </h1> 
+      <p class="hero-subtitle">
+        Choose the type of ride you want to book.
+      </p>
+
+      <div class="home-options">
+        <a class="home-option-card" href="#" id="ride-hailing-link">
+          <h2>Ride hailing</h2>
+        </a>
+
+        <a class="home-option-card" href="#" id="rent-car-link">
+          <h2>Rent a Car</h2>
+        </a>
+
+        <a class="home-option-card" href="#" id="view-rental-btn" style="margin-top:0.5em;">
+          <h2>View Rental</h2>
+        </a>
+
+        <a class="home-option-card" href="ride_payment.html" id="go-to-payment-btn" style="margin-top:0.5em;">
+          <h2>Go to Payment</h2>
+        </a>
+
+        <script>
+        // Disable View Rental by default
+        document.addEventListener('DOMContentLoaded', function () {
+          const viewRentalBtn = document.getElementById('view-rental-btn');
+          viewRentalBtn.style.opacity = '0.5';
+          viewRentalBtn.style.pointerEvents = 'none';
+          // Check for active rental
+          fetch('get_active_rental.php', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})})
+            .then(r=>r.json())
+            .then(data=>{
+              if(data.success && data.rental) {
+                viewRentalBtn.style.opacity = '1';
+                viewRentalBtn.style.pointerEvents = 'auto';
+                viewRentalBtn.onclick = function(e) { e.preventDefault(); window.location.href = 'rental.html'; };
+              } else {
+                viewRentalBtn.onclick = function(e) { e.preventDefault(); };
+              }
+            });
+        });
+        </script>
+        </a>
+
+        <a class="home-option-card" id="view-ride-request-btn" href="#" style="margin-top:0.5em; opacity:0.5; pointer-events:none;">
+          <h2>View Ride Request</h2>
+        </a>
+
+        <!-- Message display div for rent a car -->
+        <div id="rent-car-message" style="margin-top: 10px; white-space: pre-line;"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Helper: Show ongoing ride popup
+    function showOngoingRidePopup(rideStatus) {
+      const overlay = document.createElement('div');
+      overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+      const popup = document.createElement('div');
+      popup.style.cssText = 'background:white;padding:30px;border-radius:15px;box-shadow:0 4px 20px rgba(0,0,0,0.3);max-width:400px;text-align:center;';
+      popup.innerHTML = `
+        <h3 style="margin:0 0 15px 0;color:#ff9800;font-size:22px;">You have an ongoing ride</h3>
+        <p style="margin:0 0 25px 0;color:#666;font-size:16px;">You cannot request a new ride until your current ride is completed or cancelled.</p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <button id="view-ride-btn" style="padding:12px 24px;background:#0066ff;color:white;border:none;border-radius:8px;font-size:16px;cursor:pointer;font-weight:600;">View Ride</button>
+          <button id="cancel-ride-btn" style="padding:12px 24px;background:${rideStatus==='InProgress'?'#ccc':'#ff3b3b'};color:white;border:none;border-radius:8px;font-size:16px;cursor:pointer;font-weight:600;" ${rideStatus==='InProgress'?'disabled':''}>Cancel Ride</button>
+        </div>
+      `;
+      overlay.appendChild(popup);
+      document.body.appendChild(overlay);
+      document.getElementById('view-ride-btn').onclick = () => {
+        window.location.href = 'ride_tracking.html';
+      };
+      document.getElementById('cancel-ride-btn').onclick = () => {
+        if (rideStatus==='InProgress') return;
+        // Call cancel endpoint (implement as needed)
+        fetch('cancel_ride_request.php', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({/* pass ride_request_id if needed */})})
+          .then(r=>r.json()).then(data=>{
+            if(data.status==='success'){window.location.reload();}
+            else{alert(data.message||'Could not cancel ride.');}
+          });
+      };
+      overlay.onclick = (e) => { if (e.target === overlay) document.body.removeChild(overlay); };
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const rideHailingLink = document.getElementById('ride-hailing-link');
+      const rentCarLink = document.getElementById('rent-car-link');
+      const viewRideBtn = document.getElementById('view-ride-request-btn');
+      const msgDiv = document.getElementById('rent-car-message');
+
+      const viewRentalBtn = document.getElementById('view-rental-btn');
+      viewRentalBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = 'rental.html';
+      });
+
+      // Check for active ride request on page load
+
+      fetch('get_user_active_ride.php', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})})
+        .then(r=>r.json())
+        .then(data=>{
+          if(data.success && data.data && (data.data.status === 'InProgress' || data.data.status === 'Ongoing')) {
+            viewRideBtn.style.opacity = '1';
+            viewRideBtn.style.pointerEvents = 'auto';
+            viewRideBtn.onclick = function(e) { e.preventDefault(); window.location.href = 'ride_tracking.html'; };
+          } else {
+            viewRideBtn.style.opacity = '0.5';
+            viewRideBtn.style.pointerEvents = 'none';
+            viewRideBtn.onclick = function(e) { e.preventDefault(); };
+          }
+        });
+
+      rideHailingLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Check for active ride before redirecting
+        fetch('get_user_active_ride.php', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})})
+          .then(r=>r.json())
+          .then(data=>{
+            if(data.success && data.data && (data.data.status === 'InProgress' || data.data.status === 'Ongoing')) {
+              showOngoingRidePopup(data.data.status);
+            } else {
+              window.location.href='taxi.html';
+            }
+          })
+          .catch(()=>{
+            // On error, allow navigation
+            window.location.href='taxi.html';
+          });
+      });
+
+      rentCarLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        fetch('checkCanBeDriver.php', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({})
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (!data.success) {
+            msgDiv.style.color = 'red';
+            msgDiv.style.fontWeight = 'bold';
+            msgDiv.textContent = data.message || 'You must be at least 18 years old to rent a car.';
+            return; 
+          }
+          return fetch('checkRentDocs.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({})
+          })
+          .then(response => response.json())
+          .then(data => {
+            switch (data.status) {
+              case 'no_docs':
+                setTimeout(() => {window.location.href = 'rent_docs.html';}, 500); break;
+              case 'has_issues':
+                setTimeout(() => {window.location.href = 'resubmit_rent_docs.html';}, 500); break;
+              case 'pending':
+                msgDiv.style.color = 'orange'; msgDiv.style.fontWeight = 'bold'; msgDiv.textContent = data.message || 'All documents are pending approval.'; break;
+              case 'approved':
+                setTimeout(() => {window.location.href = 'rent.html';}, 500); break;
+              case 'error':
+                msgDiv.style.color = 'red'; msgDiv.style.fontWeight = 'bold'; msgDiv.textContent = data.message || 'Something went wrong.'; break;
+              default:
+                msgDiv.style.color = 'red'; msgDiv.style.fontWeight = 'bold'; msgDiv.textContent = 'Unexpected response. Please try again later.'; console.error('Unknown status:', data.status, data);
+            }
+          });
+        })
+        .catch(err => {
+          console.error(err);
+          msgDiv.style.color = 'red';
+          msgDiv.style.fontWeight = 'bold';
+          msgDiv.textContent = 'Something went wrong. Please try again later.';
+        });
+      });
+    });
+  </script>
+
+  <script src="homepage_pas.js"></script>
+</body>
+</html>

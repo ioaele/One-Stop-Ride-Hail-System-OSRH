@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Driver Request | OSRH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <header class="navbar">
+<<<<<<< HEAD
+    <a href="driver.html" class="OSRH">One-Stop Ride-Hail</a>
+=======
+    <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+>>>>>>> ff1ede1e5f11d363663d8ef9fa49e1d7869c40b6
+    <div class="profile-text">
+      <span class="profile-label">Welcome</span>
+      <span class="profile-username" id="navbar-username"></span>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">
+<<<<<<< HEAD
+        Add Vehicle
+=======
+        Request to be a Driver
+>>>>>>> ff1ede1e5f11d363663d8ef9fa49e1d7869c40b6
+      </h1>
+
+      <form id="driverVehicleForm">
+        <input type="hidden" id="vehicle_id" name="vehicle_id">
+
+        <section class="form-section">
+          <h2>Vehicle Documents</h2>
+
+          <!-- Vehicle Registration -->
+          <div class="doc-block" data-required-doc="true">
+            <h3>Vehicle Registration</h3>
+            <input type="hidden" name="vehicle_docs[0][v_doc_type]" value="1">
+
+            <div class="form-row">
+              <label for="veh_reg_code">Document Code</label>
+              <input type="text" id="veh_reg_code" name="vehicle_docs[0][doc_code]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="veh_reg_publish">Issue Date</label>
+              <input type="date" id="veh_reg_publish" name="vehicle_docs[0][v_doc_publish_date]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="veh_reg_exp">Expiration Date</label>
+              <input type="date" id="veh_reg_exp" name="vehicle_docs[0][v_doc_exp_date]">
+            </div>
+
+            <div class="form-row">
+              <label for="veh_reg_file">File (image/pdf)</label>
+              <input type="file" id="veh_reg_file" name="vehicle_docs_0_file" accept=".pdf,image/*" required>
+            </div>
+          </div>
+
+          <!-- MOT Certificate -->
+          <div class="doc-block" data-required-doc="true">
+            <h3>MOT Certificate</h3>
+            <input type="hidden" name="vehicle_docs[1][v_doc_type]" value="2">
+
+            <div class="form-row">
+              <label for="veh_mot_code">Document Code</label>
+              <input type="text" id="veh_mot_code" name="vehicle_docs[1][doc_code]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="mot_publish">Issue Date</label>
+              <input type="date" id="mot_publish" name="vehicle_docs[1][v_doc_publish_date]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="mot_exp">Expiration Date</label>
+              <input type="date" id="mot_exp" name="vehicle_docs[1][v_doc_exp_date]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="mot_file">File (image/pdf)</label>
+              <input type="file" id="mot_file" name="vehicle_docs_1_file" accept=".pdf,image/*" required>
+            </div>
+          </div>
+
+          <!-- Vehicle Classification Certificate -->
+          <div class="doc-block" data-required-doc="true">
+            <h3>Vehicle Classification Certificate</h3>
+            <input type="hidden" name="vehicle_docs[2][v_doc_type]" value="3">
+
+            <div class="form-row">
+              <label for="veh_cl_code">Document Code</label>
+              <input type="text" id="veh_cl_code" name="vehicle_docs[2][doc_code]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="veh_publish">Issue Date</label>
+              <input type="date" id="veh_publish" name="vehicle_docs[2][v_doc_publish_date]" required>
+            </div>
+
+            <div class="form-row">
+              <label for="v_doc_exp_date">Expiration Date</label>
+              <input type="date" id="v_doc_exp_date" name="vehicle_docs[2][v_doc_exp_date]">
+            </div>
+
+            <div class="form-row">
+              <label for="image_pdf">File (image/pdf)</label>
+              <input type="file" id="image_pdf" name="vehicle_docs_2_file" accept=".pdf,image/*" required>
+            </div>
+          </div>
+        </section> 
+
+        <button type="button" id="submitBtn">
+          Submit Driver & Vehicle Request
+        </button>
+        
+        <div id="alert">
+          <span id="alert-text"></span>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="vehicle_doc_request.js"></script>
+
+</body>
+</html>
