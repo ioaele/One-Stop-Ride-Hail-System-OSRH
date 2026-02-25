@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaflet Map Example</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    #map {
+      height: 600px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    button.secondary {
+      background: #6c757d;
+    }
+
+    button.secondary:hover {
+      background: #545b62;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Leaflet Map - Vehicle Tracking Example</h1>
+
+    <!-- Map container -->
+    <div id="map"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button onclick="addSampleVehicles()">Add Sample Vehicles</button>
+      <button onclick="clearAllVehicles()">Clear All</button>
+      <button onclick="fitToMarkers()">Fit to Markers</button>
+      <button class="secondary" onclick="panToCenter()">Pan to Center</button>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+
+  <!-- Include the map.js file -->
+  <script src="map.js"></script>
+
+  <script>
+    // Initialize the map on page load
+    document.addEventListener('DOMContentLoaded', function () {
+      initMap('map', {
+        center: { lat: 53.54, lng: 10 },
+        zoom: 12
+      });
+
+      // Add sample vehicles
+      addSampleVehicles();
+    });
+
+    // Add sample vehicles to the map
+    function addSampleVehicles() {
+      const sampleVehicles = [
+        {
+          id: 1,
+          lat: 53.54,
+          lng: 10,
+          label: 'Taxi - ID: 1',
+          type: 'taxi'
+        },
+        {
+          id: 2,
+          lat: 53.545,
+          lng: 10.01,
+          label: 'Premium - ID: 2',
+          type: 'premium'
+        },
+        {
+          id: 3,
+          lat: 53.535,
+          lng: 10.02,
+          label: 'Economy - ID: 3',
+          type: 'economy'
+        },
+        {
+          id: 4,
+          lat: 53.55,
+          lng: 9.99,
+          label: 'Taxi - ID: 4',
+          type: 'taxi'
+        }
+      ];
+
+      updateVehicles(sampleVehicles);
+    }
+
+    // Pan to center
+    function panToCenter() {
+      panTo(53.54, 10, 12);
+    }
+  </script>
+</body>
+</html>

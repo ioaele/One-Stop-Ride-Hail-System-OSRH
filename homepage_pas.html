@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>One-Stop Ride-Hail | Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+ 
+  <header class="navbar">
+    <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+    <div class="profile-text">
+      <span class="profile-label">Welcome</span>
+      <span class="profile-username" id="navbar-username"></span>
+      <a href="logout.php" class="logout-link">Logout</a>
+      <a href="GDPR.php" class="GDPR-link">DELETE ACCOUNT MANAMOU</a>
+    </div>
+  </header>
+
+
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">
+        Welcome back, <span id="hero-username">User</span>
+      </h1>
+
+
+      <div class="home-options">
+        
+        <a class="home-option-card" href="taxi_rent.html">
+          <h2>Request a Ride</h2>
+          <p>
+            Book a ride 
+          </p>
+        </a>
+
+        <a class="home-option-card" href="driver_doc_request.html" id="request-driver-link">
+          <h2>Request to be a Driver</h2>
+          <p>Want to join One-Stop Ride-Hail as a driver? Start here.</p>
+        </a>
+        
+        <!-- ADD THIS DIV FOR DRIVER/VEHICLE MESSAGES -->
+        <div id="driver-vehicle-message" style="margin-top: 10px; white-space: pre-line;"></div>
+        
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const link   = document.getElementById('request-driver-link');
+            const msgDiv = document.getElementById('driver-vehicle-message');
+        
+            link.addEventListener('click', function (e) {
+              e.preventDefault();
+        
+              // Clear old message
+              msgDiv.textContent = '';
+              msgDiv.style.color = 'red';
+        
+              fetch('checkUsersDocs.php', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+              })
+              .then(response => response.json())
+              .then(data => {
+                console.log('Response from PHP:', data);
+        
+                if (data.status === 'no_docs') {
+                  // ✅ No documents submitted yet - Allow redirect to initial submission
+                  window.location.href = 'driver_doc_request.html';
+        
+                } else if (data.status === 'has_issues') {
+                  // 🔄 Some documents have status 'C' (correction needed) - REDIRECT to resubmit page
+                  msgDiv.style.color = 'blue';
+                  msgDiv.style.fontWeight = 'bold';
+                  msgDiv.textContent = 'Redirecting to resubmit page...';
+                  
+                  setTimeout(() => {
+                    window.location.href = 'resubmit_all_docs.html';
+                  }, 500);
+        
+                } else if (data.status === 'pending') {
+                  // ⏳ All documents are pending approval - BLOCK redirect
+                  msgDiv.style.color = 'orange';
+                  msgDiv.style.fontWeight = 'bold';
+                  msgDiv.textContent = data.message || 'All documents are pending approval.';
+        
+                } else if (data.status === 'error') {
+                  // ⚠️ Error occurred
+                  msgDiv.style.color = 'red';
+                  msgDiv.style.fontWeight = 'bold';
+                  msgDiv.textContent = data.message || 'Something went wrong.';
+                  
+                } else {
+                  // Unknown status - BLOCK redirect
+                  msgDiv.style.color = 'red';
+                  msgDiv.style.fontWeight = 'bold';
+                  msgDiv.textContent = 'Unexpected response. Please try again later.';
+                  console.error('Unknown status:', data.status, data);
+                }
+              })
+              .catch(err => {
+                console.error(err);
+                msgDiv.style.color = 'red';
+                msgDiv.style.fontWeight = 'bold';
+                msgDiv.textContent = 'Something went wrong. Please try again later.';
+              });
+            });
+          });
+        </script>
+
+        <a class="home-option-card" href="company_request.html" id="request-company-link">
+          <h2>Are you a vehicle company? Work with us!</h2>
+        </a>
+        
+        <div id="company-message" style="margin-top: 10px; white-space: pre-line;"></div>
+        
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            const link   = document.getElementById('request-company-link');
+            const msgDiv = document.getElementById('company-message');
+        
+            link.addEventListener('click', function (e) {
+              e.preventDefault(); // don't go to the page yet
+        
+              // Clear old message
+              msgDiv.textContent = '';
+              msgDiv.style.color = 'red';
+        
+              fetch('checkCompanyDocs.php', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+              })
+                .then(response => response.json())
+                .then(data => {
+                  console.log('Response from PHP:', data);
+                  
+                  if (data.status === 'no_docs') {
+                    // ✅ No documents submitted yet - Allow redirect to initial submission
+                    window.location.href = 'company_request.html';
+                    
+                  } else if (data.status === 'all_pending') {
+                    // ⏳ All documents are status 'P' (pending) - BLOCK redirect
+                    msgDiv.style.color = 'orange';
+                    msgDiv.style.fontWeight = 'bold';
+                    msgDiv.textContent = data.message || 'You have submitted all the vehicle information. Wait for approval...';
+                    
+                  } else if (data.status === 'has_issues') {
+                    // 🔄 Some documents have status 'C' (correction needed) - REDIRECT to resubmit page
+                    msgDiv.style.color = 'blue';
+                    msgDiv.style.fontWeight = 'bold';
+                    msgDiv.textContent = 'Redirecting to resubmit page...';
+                    
+                    setTimeout(() => {
+                      window.location.href = 'company_resubmit.html';
+                    }, 500);
+                    
+                  } else if (data.status === 'other') {
+                    // ℹ️ Other mixed status - BLOCK redirect
+                    msgDiv.style.color = 'blue';
+                    msgDiv.style.fontWeight = 'bold';
+                    msgDiv.textContent = data.message || 'There is some status information for your documents.';
+                    
+                  } else if (data.status === 'error') {
+                    // ⚠️ Error occurred
+                    msgDiv.style.color = 'red';
+                    msgDiv.style.fontWeight = 'bold';
+                    msgDiv.textContent = data.message || 'Something went wrong. Please try again later.';
+                    
+                  } else {
+                    // Unknown status - BLOCK redirect just to be safe
+                    msgDiv.style.color = 'red';
+                    msgDiv.style.fontWeight = 'bold';
+                    msgDiv.textContent = 'Unexpected response. Please try again later.';
+                    console.error('Unknown status:', data.status, data);
+                  }
+                })
+                .catch(err => {
+                  console.error('Fetch error:', err);
+                  msgDiv.style.color = 'red';
+                  msgDiv.style.fontWeight = 'bold';
+                  msgDiv.textContent = 'Connection error. Please try again later.';
+                });
+            });
+          });
+        </script>
+        
+      </div>
+    </section>
+  </main>
+
+
+  <script src="homepage_pas.js"></script>
+</body>
+</html>

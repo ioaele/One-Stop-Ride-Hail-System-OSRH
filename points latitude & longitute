@@ -1,0 +1,39 @@
+-- Προαιρετικά: καθάρισε πρώτα τον πίνακα
+-- TRUNCATE TABLE [eioann09].[POINT];
+-- ή
+-- DELETE FROM [eioann09].[POINT];
+
+DECLARE @i INT = 1;
+
+WHILE @i <= 10000
+BEGIN
+    INSERT INTO [eioann09].[POINT]
+        (point_id,
+         coordinate_id,
+         parish,
+         providence,
+         postcode,
+         country,
+         city,
+         radius,
+         latitude,
+         longitude)
+    VALUES
+        (
+            @i,                           -- point_id
+            @i,                           -- coordinate_id (ίδιο με point_id για μοναδικότητα)
+            NULL,                         -- parish
+            NULL,                         -- providence
+            NULL,                         -- postcode
+            NULL,                         -- country
+            NULL,                         -- city
+            NULL,                         -- radius (ή π.χ. 0.00)
+            -- latitude: WGS84 [-90, 90]
+            CAST(-90.0 + (RAND(CHECKSUM(NEWID())) * 180.0) AS DECIMAL(4,2)),
+            -- longitude: περιορισμένο σε [-99.99, 99.99] λόγω DECIMAL(4,2)
+           CAST(-180.0 + (RAND(CHECKSUM(NEWID())) * 360.0) AS DECIMAL(8,5))
+
+        );
+
+    SET @i = @i + 1;
+END;

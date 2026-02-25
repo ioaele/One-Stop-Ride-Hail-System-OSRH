@@ -1,0 +1,98 @@
+<head>
+    <meta charset="UTF-8" />
+    <title>Driver Request | OSRH</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css">
+  </head>
+  
+  <body>
+    <header class="navbar">
+      <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+      <div class="profile-text">
+        <span class="profile-label">Welcome</span>
+        <span class="profile-username" id="navbar-username"></span>
+      </div>
+    </header>
+  
+    <main class="main">
+      <section class="hero-card">
+        <h1 class="hero-title">
+          Rent a Car
+        </h1>
+    
+        <div id="driver-rent-message" style="margin-top: 10px; white-space: pre-line;"></div>
+        <form id="driverForm">
+  
+          <section class="form-section">
+            <h2>Required Documnets</h2>
+  
+           
+            <div class="doc-block" data-required-doc="true">
+              <h3>ID / Passport</h3>
+              <input type="hidden" name="driver_docs[0][d_doc_type]" value="7">
+  
+              <div class="form-row">
+                <label for="id_doc_code">Document Code</label>
+                <input type="text" id="id_doc_code" name="driver_docs[0][doc_code]" required>
+              </div>
+  
+              <div class="form-row">
+                <label for="id_doc_publish">Issue Date</label>
+                <input type="date" id="id_doc_publish" name="driver_docs[0][d_doc_publish_date]" required>
+              </div>
+  
+              <div class="form-row">
+                <label for="id_doc_exp">Expiration Date</label>
+                <input type="date" id="id_doc_exp" name="driver_docs[0][d_doc_ex_date]">
+              </div>
+  
+              <div class="form-row">
+                <label for="id_doc_file">File (image/pdf)</label>
+                <input type="file" id="id_doc_file" name="driver_docs[0][image_pdf]" accept=".pdf,image/*" required>
+                <small style="color: red; display: block; margin-top: 5px;">Maximum 2MB</small>
+              </div>
+            </div>
+  
+            
+            <div class="doc-block" data-required-doc="true">
+              <h3>Driving License</h3>
+              <input type="hidden" name="driver_docs[1][d_doc_type]" value="9">
+  
+              <div class="form-row">
+                <label for="dl_code">Document Code</label>
+                <input type="text" id="dl_code" name="driver_docs[1][doc_code]" required>
+              </div>
+  
+              <div class="form-row">
+                <label for="dl_publish">Issue Date</label>
+                <input type="date" id="dl_publish" name="driver_docs[1][d_doc_publish_date]" required>
+              </div>
+  
+              <div class="form-row">
+                <label for="dl_exp">Expiration Date</label>
+                <input type="date" id="dl_exp" name="driver_docs[1][d_doc_ex_date]">
+              </div>
+  
+              <div class="form-row">
+                <label for="dl_file">File (image/pdf)</label>
+                <input type="file" id="dl_file" name="driver_docs[1][image_pdf]" accept=".pdf,image/*" required>
+                <small style="color: red; display: block; margin-top: 5px;">Maximum 2MB</small>
+              </div>
+            </div>
+  
+
+          <button type="button" id="submitBtn">
+            Continue
+          </button>
+          
+          <div id="alert">
+            <span id="alert-text"></span>
+          </div>
+  
+        </form>
+      </section>
+    </main>
+    
+    <script src="rent_docs.js"></script>
+  </body>
+  </html>

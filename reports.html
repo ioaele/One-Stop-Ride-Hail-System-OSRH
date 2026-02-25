@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reports | OSRH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="navbar">
+    <a href="operator_dashboard.html" class="OSRH">One-Stop Ride-Hail - Operator</a>
+    <nav class="nav-links">
+      <a href="reports.html" class="nav-btn active">Reports</a>
+    </nav>
+    <div class="profile-text">
+      <span class="profile-label">Operator</span>
+      <span class="profile-username" id="navbar-username">Admin</span>
+    </div>
+  </header>
+
+  <main class="main">
+    <div class="reports-container">
+
+      <div class="page-header">
+        <h1>Reports</h1>
+        <p>Generate and analyze reports for routes, costs, driver performance, and revenue</p>
+      </div>
+
+      <!-- FILTER PANEL -->
+      <div class="filter-panel">
+        <h2>Filter Criteria</h2>
+
+        <div class="filter-grid">
+          <!-- Time period -->
+          <div class="filter-group">
+            <label for="time-period">Time Period</label>
+            <select id="time-period">
+              <option value="day">Daily</option>
+              <option value="week">Weekly</option>
+              <option value="month" selected>Monthly</option>
+              <option value="quarter">Quarterly</option>
+              <option value="year">Yearly</option>
+              <option value="custom">Custom Date Range</option>
+            </select>
+          </div>
+
+          <!-- Custom date range -->
+          <div class="filter-group" id="custom-date-group" style="display: none;">
+            <label>Date Range</label>
+            <div class="date-range">
+              <input type="date" id="date-from" />
+              <span>to</span>
+              <input type="date" id="date-to" />
+            </div>
+          </div>
+
+          <!-- Service Type -->
+          <div class="filter-group">
+            <label for="ride-type">Service Type</label>
+            <select id="ride-type">
+              <option value="">All Service Types</option>
+              <option value="Standard passenger ride">Standard passenger ride</option>
+              <option value="Premium passenger ride">Premium passenger ride</option>
+              <option value="Light household cargo">Light household cargo</option>
+              <option value="Heavy household cargo">Heavy household cargo</option>
+              <option value="Multi-hop transport">Multi-hop transport</option>
+            </select>
+          </div>
+
+          <!-- Location Filters -->
+          <div class="filter-group">
+            <label>Location Filter</label>
+            <div class="location-type-selector">
+              <button type="button" class="location-type-btn active" data-type="none">None</button>
+              <button type="button" class="location-type-btn" data-type="country">Country</button>
+              <button type="button" class="location-type-btn" data-type="providence">Province</button>
+              <button type="button" class="location-type-btn" data-type="city">City</button>
+              <button type="button" class="location-type-btn" data-type="parish">Parish</button>
+              <button type="button" class="location-type-btn" data-type="postcode">Postal Code</button>
+              <button type="button" class="location-type-btn" data-type="coordinates">Coordinates</button>
+            </div>
+
+            <input type="text" id="location-value" placeholder="Enter location..." style="display: none;">
+
+            <div class="coordinates-inputs" id="coords-inputs">
+              <input type="number" step="any" placeholder="Latitude" id="coord-lat">
+              <input type="number" step="any" placeholder="Longitude" id="coord-lng">
+              <input type="number" placeholder="Radius (meters)" id="coord-radius">
+              <span class="full-width" style="font-size: 0.8rem;">Or define rectangular area:</span>
+              <input type="number" step="any" placeholder="Latitude 2" id="coord-lat2">
+              <input type="number" step="any" placeholder="Longitude 2" id="coord-lng2">
+            </div>
+
+            <div class="point-type-selector" id="point-type-selector" style="display: none;">
+              <button type="button" class="point-type-btn" data-point="0">Pickup Only</button>
+              <button type="button" class="point-type-btn active" data-point="null">Both</button>
+              <button type="button" class="point-type-btn" data-point="1">Dropoff Only</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORT CARDS -->
+      <div class="reports-grid">
+
+        <!-- Ride Statistics -->
+        <div class="report-card" data-report="statistics">
+          <div class="report-card-header">
+            <h3 class="report-card-title">Ride Statistics</h3>
+          </div>
+          <p class="report-card-description"></p>
+          <div class="report-options">
+            <div class="report-option">
+              <input type="radio" name="stats-type" id="stats-count" value="count" checked>
+              <label for="stats-count">Number of routes completed</label>
+            </div>
+            <div class="report-option">
+              <input type="radio" name="stats-type" id="stats-trends" value="trends">
+              <label for="stats-trends">Category trends comparison (% of total)</label>
+            </div>
+            <div class="report-option">
+              <input type="radio" name="stats-type" id="stats-peak" value="peak">
+              <label for="stats-peak">High activity periods</label>
+            </div>
+          </div>
+          <div class="report-note" id="peak-note" style="display: none;">
+            <p>Note: Time period filter cannot be applied to this report. Results will be sorted in descending order by activity level.</p>
+          </div>
+          <button class="generate-btn" onclick="generateReport('statistics', event)">Generate Report</button>
+        </div>
+
+        <!-- Ride Costs -->
+        <div class="report-card" data-report="cost">
+          <div class="report-card-header">
+            <h3 class="report-card-title">Ride Costs</h3>
+          </div>
+          <div class="report-options">
+            <div class="report-option">
+              <input type="radio" name="cost-type" id="cost-avg" value="cost_avg" checked>
+              <label for="cost-avg">Average cost per category</label>
+            </div>
+            <div class="report-option">
+              <input type="radio" name="cost-type" id="cost-max" value="cost_extremes_max">
+              <label for="cost-max">Highest cost routes</label>
+            </div>
+            <div class="report-option">
+              <input type="radio" name="cost-type" id="cost-min" value="cost_extremes_min">
+              <label for="cost-min">Lowest cost routes</label>
+            </div>
+          </div>
+          <button class="generate-btn" onclick="generateReport('cost', event)">Generate Report</button>
+        </div>
+
+        <!-- Driver Performance -->
+        <div class="report-card" data-report="performance">
+          <div class="report-card-header">
+            <h3 class="report-card-title">Driver Performance</h3>
+          </div>
+          <div class="report-options">
+            <div class="report-option">
+              <input type="radio" name="perf-type" id="perf-drivers" value="drivers" checked>
+              <label for="perf-drivers">Driver performance</label>
+            </div>
+          </div>
+          <button class="generate-btn" onclick="generateReport('performance', event)">Generate Report</button>
+        </div>
+
+        <!-- Driver Revenue -->
+        <div class="report-card" data-report="revenue">
+          <div class="report-card-header">
+            <h3 class="report-card-title">Driver Revenue</h3>
+          </div>
+          <div class="report-options">
+            <div class="report-option">
+              <input type="radio" name="rev-type" id="rev-monthly" value="monthly" checked>
+              <label for="rev-monthly">Monthly revenue (current year)</label>
+            </div>
+            <div class="report-option">
+              <input type="radio" name="rev-type" id="rev-yearly" value="yearly">
+              <label for="rev-yearly">Yearly totals (last 3 years)</label>
+            </div>
+          </div>
+          <button class="generate-btn" onclick="generateReport('revenue', event)">Generate Report</button>
+        </div>
+
+      </div>
+
+      <!-- OUTPUT AREA (fixed) -->
+      <div id="report-output" class="report-output" style="display: none;">
+        <div class="output-header">
+          <h2 id="output-title"></h2>
+          <p id="output-meta"></p>
+        </div>
+
+        <div class="summary-cards" id="summary-cards" style="display: none;"></div>
+        <div id="report-content"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // API Base URL - Update this to match your server configuration
+    const API_BASE_URL = 'api';
+
+    // Current report data for export
+    let currentReportData = null;
+
+    // State for filters
+    let currentLocationFilterType = 'none';
+    let currentPointType = null; // null = both, 0 = pickup, 1 = dropoff
+
+    // Time period selector
+    document.getElementById('time-period').addEventListener('change', function() {
+      const customGroup = document.getElementById('custom-date-group');
+      customGroup.style.display = this.value === 'custom' ? 'flex' : 'none';
+    });
+
+    // Location type selector
+    document.querySelectorAll('.location-type-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.location-type-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+
+        const type = this.dataset.type;
+        currentLocationFilterType = type;
+
+        const locationInput = document.getElementById('location-value');
+        const coordsInputs = document.getElementById('coords-inputs');
+        const pointTypeSelector = document.getElementById('point-type-selector');
+
+        if (type === 'none') {
+          locationInput.style.display = 'none';
+          coordsInputs.classList.remove('visible');
+          pointTypeSelector.style.display = 'none';
+        } else if (type === 'coordinates') {
+          locationInput.style.display = 'none';
+          coordsInputs.classList.add('visible');
+          pointTypeSelector.style.display = 'flex';
+        } else {
+          locationInput.style.display = 'block';
+          coordsInputs.classList.remove('visible');
+          pointTypeSelector.style.display = 'flex';
+
+          const placeholders = {
+            'country': 'Enter country (e.g., Cyprus)',
+            'providence': 'Enter province (e.g., Nicosia)',
+            'city': 'Enter city (e.g., Nicosia)',
+            'parish': 'Enter parish',
+            'postcode': 'Enter postal code (e.g., 1000)'
+          };
+          locationInput.placeholder = placeholders[type] || 'Enter location...';
+        }
+      });
+    });
+
+    // Point type selector (pickup/dropoff/both)
+    document.querySelectorAll('.point-type-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.point-type-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentPointType = this.dataset.point === 'null' ? null : parseInt(this.dataset.point);
+      });
+    });
+
+    // Peak periods note visibility
+    document.querySelectorAll('input[name="stats-type"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        const note = document.getElementById('peak-note');
+        note.style.display = this.value === 'peak' ? 'flex' : 'none';
+      });
+    });
+
+    // Gather filter values
+    function getFilterValues() {
+      const filters = {
+        time_period: document.getElementById('time-period').value,
+        ride_type: document.getElementById('ride-type').value || null
+      };
+
+      // Custom date range
+      if (filters.time_period === 'custom') {
+        filters.start_date = document.getElementById('date-from').value || null;
+        filters.end_date = document.getElementById('date-to').value || null;
+      }
+
+      // Location filters
+      if (currentLocationFilterType !== 'none') {
+        filters.location_type = currentPointType;
+
+        if (currentLocationFilterType === 'coordinates') {
+          const lat1 = document.getElementById('coord-lat').value;
+          const lng1 = document.getElementById('coord-lng').value;
+          const radius = document.getElementById('coord-radius').value;
+          const lat2 = document.getElementById('coord-lat2').value;
+          const lng2 = document.getElementById('coord-lng2').value;
+
+          if (lat1) filters.latitude1 = parseFloat(lat1);
+          if (lng1) filters.longitude1 = parseFloat(lng1);
+          if (radius) filters.radius_meters = parseInt(radius);
+          if (lat2) filters.latitude2 = parseFloat(lat2);
+          if (lng2) filters.longitude2 = parseFloat(lng2);
+        } else {
+          const locationValue = document.getElementById('location-value').value;
+          if (locationValue) {
+            filters[currentLocationFilterType] = locationValue;
+          }
+        }
+      }
+
+      return filters;
+    }
+
+    // Generate report function
+    async function generateReport(type, event) {
+      const btn = event.target.closest('.generate-btn');
+      const originalContent = btn.innerHTML;
+
+      // Show loading state
+      btn.disabled = true;
+      btn.innerHTML = 'Generating...';
+
+      const output = document.getElementById('report-output');
+      const title = document.getElementById('output-title');
+      const meta = document.getElementById('output-meta');
+      const content = document.getElementById('report-content');
+      const summaryCards = document.getElementById('summary-cards');
+
+      try {
+        const filters = getFilterValues();
+        let apiUrl = '';
+        let reportTitle = '';
+
+        switch (type) {
+          case 'cost':
+            const costType = document.querySelector('input[name="cost-type"]:checked').value;
+            filters.report_type = costType;
+            apiUrl = `${API_BASE_URL}/report_avg_cost.php`;
+            reportTitle = 'Route Cost Report';
+            break;
+          case 'statistics':
+            const statsType = document.querySelector('input[name="stats-type"]:checked').value;
+            filters.report_type = statsType;
+            apiUrl = `${API_BASE_URL}/report_statistics.php`;
+            reportTitle = 'Route Statistics Report';
+            break;
+          case 'performance':
+            const perfType = document.querySelector('input[name="perf-type"]:checked').value;
+            filters.report_type = perfType;
+            apiUrl = `${API_BASE_URL}/report_performance.php`;
+            reportTitle = 'Driver/Vehicle Performance Report';
+            break;
+          case 'revenue':
+            const revType = document.querySelector('input[name="rev-type"]:checked').value;
+            filters.report_type = revType;
+            apiUrl = `${API_BASE_URL}/report_revenue.php`;
+            reportTitle = 'Driver/Vehicle Revenue Report';
+            break;
+        }
+
+        // Make API request
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(filters)
+        });
+
+        // This will throw if response is HTML instead of JSON
+        const data = await response.json();
+
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to generate report');
+        }
+
+        // Store data for export
+        currentReportData = data;
+
+        // Show output section
+        output.style.display = 'block';
+        output.classList.add('visible');
+        title.textContent = reportTitle;
+        meta.textContent = `Generated: ${data.generated_at} | Records: ${data.record_count}`;
+
+        // Render summary cards if available
+        if (data.summary) {
+          summaryCards.style.display = 'grid';
+          summaryCards.innerHTML = renderSummaryCards(data.summary);
+        } else {
+          summaryCards.style.display = 'none';
+        }
+
+        // Render table
+        if (data.data && data.data.length > 0) {
+          content.innerHTML = renderTable(data.data, type);
+        } else {
+          content.innerHTML = renderNoResults();
+        }
+
+        // Scroll to results
+        output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      } catch (error) {
+        console.error('Report generation error:', error);
+        output.style.display = 'block';
+        output.classList.add('visible');
+        title.textContent = 'Error';
+        meta.textContent = '';
+        summaryCards.style.display = 'none';
+        content.innerHTML = `
+          <div class="error-message">
+            <span>${error.message}</span>
+          </div>
+        `;
+      } finally {
+        // Restore button
+        btn.disabled = false;
+        btn.innerHTML = originalContent;
+      }
+    }
+
+    // Render summary cards
+    function renderSummaryCards(summary) {
+      let html = '';
+
+      if (summary.min_cost !== undefined) {
+        html += `
+          <div class="summary-card">
+            <div class="value">€${parseFloat(summary.min_cost).toFixed(2)}</div>
+            <div class="label">Minimum Cost</div>
+          </div>
+        `;
+      }
+
+      if (summary.max_cost !== undefined) {
+        html += `
+          <div class="summary-card">
+            <div class="value">€${parseFloat(summary.max_cost).toFixed(2)}</div>
+            <div class="label">Maximum Cost</div>
+          </div>
+        `;
+      }
+
+      if (summary.overall_avg !== undefined) {
+        html += `
+          <div class="summary-card">
+            <div class="value">€${parseFloat(summary.overall_avg).toFixed(2)}</div>
+            <div class="label">Overall Average</div>
+          </div>
+        `;
+      }
+
+      if (summary.total_records !== undefined) {
+        html += `
+          <div class="summary-card">
+            <div class="value">${summary.total_records.toLocaleString()}</div>
+            <div class="label">Total Records</div>
+          </div>
+        `;
+      }
+
+      if (summary.total_rides !== undefined) {
+        html += `
+          <div class="summary-card">
+            <div class="value">${summary.total_rides.toLocaleString()}</div>
+            <div class="label">Total Rides</div>
+          </div>
+        `;
+      }
+
+      if (summary.total_revenue !== undefined) {
+        html += `
+          <div class="summary-card">
+            <div class="value">€${parseFloat(summary.total_revenue).toFixed(2)}</div>
+            <div class="label">Total Revenue</div>
+          </div>
+        `;
+      }
+
+      return html;
+    }
+
+    // Render data table
+function renderTable(data, reportType) {
+  if (!data || data.length === 0) {
+    return renderNoResults();
+  }
+
+  const columns = Object.keys(data[0]);
+
+  const formatHeader = (col) => {
+    return col
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (l) => l.toUpperCase());
+  };
+
+  const isNumericColumn = (col) => {
+    const lower = col.toLowerCase();
+    return [
+      'average_cost',
+      'avg_cost',
+      'total_rides',
+      'total_trips',
+      'price',
+      'revenue',
+      'earnings',
+      'rating',
+      'count',
+      'distance',
+      'duration',
+    ].some((keyword) => lower.includes(keyword));
+  };
+
+  const formatValue = (value, col) => {
+    if (value === null || value === undefined || value === '') return '-';
+
+    const lower = col.toLowerCase();
+
+    if (
+      lower.includes('cost') ||
+      lower.includes('price') ||
+      lower.includes('revenue') ||
+      lower.includes('earning')
+    ) {
+      const num = Number(value);
+      if (isNaN(num)) return value;
+      return '€' + num.toFixed(2);
+    }
+
+    if (lower.includes('rating')) {
+      const num = Number(value);
+      if (isNaN(num)) return value;
+      return num.toFixed(1);
+    }
+
+    if (typeof value === 'number') {
+      return value.toLocaleString();
+    }
+
+    return value;
+  };
+
+  const headerHtml = columns
+    .map((col) => `<th>${formatHeader(col)}</th>`)
+    .join('');
+
+  const rowsHtml = data
+    .map(
+      (row) => `
+        <tr>
+          ${columns
+            .map(
+              (col) => `
+            <td class="${isNumericColumn(col) ? 'number' : ''}">
+              ${formatValue(row[col], col)}
+            </td>`
+            )
+            .join('')}
+        </tr>
+      `
+    )
+    .join('');
+
+  return `
+    <div class="table-wrapper">
+      <table class="report-table">
+        <thead>
+          <tr>${headerHtml}</tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+
+    // Render no results message
+    function renderNoResults() {
+      return `
+        <div class="no-results">
+          <p>No data found for the selected criteria.</p>
+          <p style="font-size: 0.9rem; margin-top: 0.5rem;">Try adjusting your filters or selecting a different time period.</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+<<<<<<< HEAD
+</html>
+=======
+</html>
+>>>>>>> ff1ede1e5f11d363663d8ef9fa49e1d7869c40b6

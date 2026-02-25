@@ -1,0 +1,33 @@
+function postrequests() {
+    const addressEl = document.querySelector("#Address");
+    const regionEl  = document.querySelector("#Region");
+    const cityEl    = document.querySelector("#City");
+  
+    if (!addressEl || !regionEl || !cityEl) {
+      console.error("One of the inputs was not found (check IDs).");
+      return;
+    }
+  
+    const data = {
+      address:  addressEl.value,
+      region:   regionEl.value,
+      city:     cityEl.value,
+      username: 'aioann19'
+    };
+  
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState !== 4) return;
+  
+      if (xhr.status >= 200 && xhr.status < 300) {
+        console.log("Response:", xhr.responseText);
+      } else {
+        console.error("Error:", xhr.status, xhr.responseText);
+      }
+    };
+  
+    xhr.open('POST', '/PHP/php.php');     // adjust path if needed
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify(data));
+  }
+  

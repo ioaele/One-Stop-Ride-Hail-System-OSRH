@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rental Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="rental.css">
+</head>
+<body>
+  <main class="main">
+    <section class="rental-card">
+      <h1>Your Current Rental</h1>
+      <div id="rental-details">
+        <div class="rental-info-box">
+          <p>Loading rental details...</p>
+        </div>
+      </div>
+      <div id="rental-actions" style="display:none; margin-top:2em;">
+        <button id="back-btn" style="padding:10px 24px; background:#ccc; color:#222; border:none; border-radius:8px; font-size:16px; cursor:pointer; font-weight:600;">Back</button>
+        <button id="complete-rental-btn" style="padding:10px 24px; background:#ff3b3b; color:white; border:none; border-radius:8px; font-size:16px; cursor:pointer; font-weight:600; margin-left:10px;">Complete Rental Early</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    // Fetch active rental details
+    fetch('get_active_rental.php', {method:'POST',headers:{'Content-Type':'application/json'}})
+      .then(r=>r.json())
+      .then(data=>{
+        if(data.success && data.rental) {
+          const r = data.rental;
+          window.currentRentalId = r.ride_id;
+          document.getElementById('rental-details').innerHTML = `
+            <div class="rental-info-box">
+              <p><strong>Rental ID:</strong> ${r.ride_id || '-'}</p>
+              <p><strong>Vehicle ID:</strong> ${r.vehicle_id || '-'}</p>
+              <p><strong>License Plate:</strong> ${r.license_plate || '-'}</p>
+              <p><strong>Start Time:</strong> ${r.ride_datetime_start ? new Date(r.ride_datetime_start).toLocaleString() : '-'}</p>
+              <p><strong>Expected End:</strong> ${r.ride_datetime_end ? new Date(r.ride_datetime_end).toLocaleString() : '-'}</p>
+              <p><strong>Status:</strong> ${r.status || '-'}</p>
+              <p><strong>Current Price:</strong> <span style="font-size:1.2em;color:#0066ff;">€${r.price ? Number(r.price).toFixed(2) : '0.00'}</span></p>
+            </div>
+          `;
+          document.getElementById('rental-actions').style.display = '';
+        } else {
+          document.getElementById('rental-details').innerHTML = '<p>No active rental found.</p>';
+        }
+      });
+    document.getElementById('back-btn').onclick = function() {
+      window.location.href = 'taxi_rent.html';
+    };
+    document.getElementById('complete-rental-btn').onclick = function() {
+      if(confirm('Are you sure you want to complete your rental early?')) {
+        // Get user's current location
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(function(position) {
+            const user_lat = position.coords.latitude;
+            const user_lng = position.coords.longitude;
+            // Get ride_id from loaded rental data
+            const rideId = window.currentRentalId;
+            fetch('complete_rental.php', {
+              method:'POST',
+              headers:{'Content-Type':'application/json'},
+              body:JSON.stringify({ride_id: rideId, user_lat, user_lng})
+            })
+            .then(r=>r.json())
+            .then(data=>{
+              if(data.success) {
+                alert('Rental completed!');
+                window.location.href = 'taxi_rent.html';
+              } else {
+                alert(data.message || 'Could not complete rental.');
+              }
+            });
+          }, function() {
+            alert('Could not get your location. Please enable location services.');
+          });
+        } else {
+          alert('Geolocation is not supported by your browser.');
+        }
+      }
+    };
+  </script>
+</body>
+</html>

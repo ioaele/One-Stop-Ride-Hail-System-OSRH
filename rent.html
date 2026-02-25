@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Rent a car | OSRH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a href="homepage_pas.html" class="OSRH">One-Stop Ride-Hail</a>
+
+    <div class="profile-text">
+      <span class="profile-label">Welcome</span>
+      <span class="profile-username" id="navbar-username"></span>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">Rent a car</h1>
+      
+      <form id="passenger-form">
+        
+   
+    <h2 class="section-title">1. Ride Type </h2>
+        <div class="form-group">
+          <label for="service_type">Ride Type</label>
+          <select id="service_type" name="service_type">
+            <option value="11">Standard passenger ride</option>
+            <option value="12">Premium passenger ride</option>
+            <option value="13">Light cargo transport</option>
+            <option value="14">Heavy cargo transport</option>
+          </select>
+        </div>
+
+        <h2 class="section-title">2. Duration </h2>
+
+            <label for="start">Rental start (date & time):</label>
+            <input 
+              type="datetime-local" 
+              id="start" 
+              name="rental_start" 
+              required
+            >
+            <br><br>
+          
+            <label for="end">Rental end (date & time):</label>
+            <input 
+              type="datetime-local" 
+              id="end" 
+              name="rental_end" 
+              required
+            >
+            <br><br>
+     
+            <div class="button-row">
+                <button 
+                  type="button" 
+                  class="btn-primary" 
+                  onclick="saveRentalDataAndContinue()">
+                  Continue
+                </button>
+              </div>
+              
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // Display username from localStorage
+    const storedUsername = localStorage.getItem('username') || 'User';
+    const navbarUsernameEl = document.getElementById('navbar-username');
+    if (navbarUsernameEl) navbarUsernameEl.textContent = storedUsername;
+
+    // Set default values for testing (current date/time + 1 hour and + 2 days)
+    window.addEventListener('DOMContentLoaded', () => {
+      const now = new Date();
+      const startDate = new Date(now.getTime() + 60 * 60 * 1000); // +1 hour
+      const endDate = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000); // +2 days
+      
+      document.getElementById('start').value = formatDateTimeLocal(startDate);
+      document.getElementById('end').value = formatDateTimeLocal(endDate);
+    });
+
+    function formatDateTimeLocal(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    function saveRentalDataAndContinue() {
+      const serviceType = document.getElementById('service_type').value;
+      const rentalStart = document.getElementById('start').value;
+      const rentalEnd = document.getElementById('end').value;
+
+      // Validate inputs
+      if (!rentalStart || !rentalEnd) {
+        alert('Please select both rental start and end dates.');
+        return;
+      }
+
+      if (new Date(rentalStart) >= new Date(rentalEnd)) {
+        alert('Rental end date must be after start date.');
+        return;
+      }
+
+      // Save to PHP session
+      fetch('set_rental_session.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          service_type_id: serviceType,
+          rental_start: rentalStart,
+          rental_end: rentalEnd
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          window.location.href = 'vehicle_options.html';
+        } else {
+          alert('Error saving rental data: ' + (data.message || 'Unknown error'));
+        }
+      })
+      .catch(err => {
+        console.error('Error:', err);
+        alert('Network error. Please try again.');
+      });
+    }
+  </script>
+  
+</body>
+</html>

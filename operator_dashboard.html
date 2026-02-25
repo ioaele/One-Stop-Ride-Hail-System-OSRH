@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Operator Dashboard | OSRH</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <header class="navbar">
+    <a href="operator_dashboard.html" class="OSRH">One-Stop Ride-Hail - Operator</a>
+    <div class="profile-text">
+      <span class="profile-label">Operator</span>
+      <span class="profile-username" id="navbar-username">Admin</span>
+      <a href="logout.php" class="logout-link">Logout</a>
+    </div>
+  </header>
+
+  <!-- BUTTON THAT LEADS TO THE safetyChar.html-->
+  <button onclick="window.location.href='safetyChar.html'" style="padding: 14px 28px; background: #0071e3; color: white; border: none; border-radius: 10px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+    Vehicle Safety Check
+  </button>
+
+
+  <button onclick="window.location.href='printSafeChar.html'" style="padding: 14px 28px; background: #0068d0; color: white; border: none; border-radius: 10px; font-weight: 500; cursor: pointer; transition: all 0.2s ease;">
+    Safety Characteristics Records
+  </button>
+  <main class="main">
+    <section class="hero-card">
+      <h1 class="hero-title">Document Review Dashboard</h1>
+
+      <div id="alert" class="alert">
+        <span id="alert-text"></span>
+      </div>
+  
+      <div class="filters">
+        <select id="filter-category">
+          <option value="all">All Documents</option>
+          <option value="DRIVER">Driver Documents</option>
+          <option value="VEHICLE">Vehicle Documents</option>
+        </select>
+        <input id="filter-username"> 
+    
+  
+      <div id="loading" class="loading">
+        <p>Loading pending documents</p>
+      </div>
+
+  
+      <div id="no-documents" class="no-documents">
+        <p>No pending documents to review!</p>
+      </div>
+
+    
+      <div id="documents-container" class="documents-grid"></div>
+
+    </section>
+  </main>
+
+  <div id="imageModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modalImage" alt="Document Preview">
+  </div>
+
+  <script src="operator_dashboard.js"></script>
+</body>
+</html>

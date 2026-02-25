@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Rental</title>
+  <link rel="stylesheet" href="rent_confirm.css" />
+</head>
+<body>
+  <div class="confirm-container">
+    <div class="confirm-title">Confirm Your Rental</div>
+    <img id="car-image" class="car-image" src="vehicle_icons/default.png" alt="Car" style="display:none;" />
+    <div class="confirm-details" id="rental-details">
+      Loading vehicle details...
+    </div>
+    <button class="confirm-btn" id="confirm-btn">Confirm Rental</button>
+    <button class="cancel-btn" id="cancel-btn">Go Back</button>
+    <button class="menu-btn" id="menu-btn">Go to Menu</button>
+  </div>
+  <script>
+    // Fetch selected vehicle info from the session
+    fetch('get_rental_session.php')
+      .then(r => r.json())
+      .then(data => {
+        if (!data.selected_vehicle_id) {
+          document.getElementById('rental-details').textContent = 'No vehicle selected.';
+          document.getElementById('confirm-btn').disabled = true;
+          return;
+        }
+        // Show car image based on vehicle_type_name
+        let img = document.getElementById('car-image');
+        let type = (data.vehicle_type_name || '').toLowerCase();
+        let iconUrl = 'vehicle_icons/default.png';
+        if (type.includes('hatchback')) iconUrl = 'vehicle_icons/hatchback.png';
+        else if (type.includes('suv')) iconUrl = 'vehicle_icons/suv.png';
+        else if (type.includes('sedan')) iconUrl = 'vehicle_icons/sedan.png';
+        else if (type.includes('van')) iconUrl = 'vehicle_icons/van.png';
+        img.src = iconUrl;
+        img.style.display = '';
+        document.getElementById('rental-details').innerHTML = `
+          <strong>Type:</strong> ${data.vehicle_type_name || ''} <br>
+          <strong>License Plate:</strong> ${data.license_plate || ''} <br>
+          <strong>Rental Start:</strong> ${data.rental_start || ''} <br>
+          <strong>Rental End:</strong> ${data.rental_end || ''}
+        `;
+      });
+    document.getElementById('confirm-btn').onclick = function() {
+      const btn = this;
+      btn.disabled = true;
+      btn.textContent = 'Processing...';
+      fetch('confirm_rental.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        // No body needed if session is used, else pass params here
+      })
+      .then(r => r.json())
+      .then(res => {
+        if (res.success) {
+          alert('Rental confirmed!');
+          window.location.href = 'homepage_pas.html';
+        } else {
+          alert('Error: ' + (res.error || 'Could not confirm rental.'));
+          btn.disabled = false;
+          btn.textContent = 'Confirm Rental';
+        }
+      })
+      .catch(err => {
+        alert('Network error.');
+        btn.disabled = false;
+        btn.textContent = 'Confirm Rental';
+      });
+    };
+    document.getElementById('cancel-btn').onclick = function() {
+      window.location.href = 'vehicle_options.html';
+    };
+    document.getElementById('menu-btn').onclick = function() {
+      window.location.href = 'homepage_pas.html';
+    };
+  </script>
+</body>
+</html>

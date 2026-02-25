@@ -1,0 +1,14 @@
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [eioann09].[getRoleType]
+
+@users_id INT
+AS BEGIN
+
+SELECT type_r 
+FROM ROLE
+WHERE @users_id=users_id
+END
+GO

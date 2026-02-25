@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>One-Stop Ride-Hail | Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
+
+
+  <header class="navbar">
+    <div class="website_name">One-Stop Ride-Hail ADMIN</div>
+    <div class="profile-text">
+      <span class="profile-label">Welcome</span>
+      <span class="profile-username" id="navbar-username">User</span>
+      <a href="logout.php" class="logout-link">Logout</a>
+      
+    </div>
+  </header>
+  
+  <main class="main">
+    <section class="admin-card">
+      <h1 class="admin-title">System Operators</h1>
+      <p class="admin-subtitle">
+        Set a System operator.
+      </p>
+  
+      <form id="so-form">
+        <div class="form-group">
+          <label for="so-username">Username:</label>
+          <input type="text" id="so-username" required />
+        </div>
+  
+        <button type="submit" class="btn-primary">
+          Submit
+        </button>
+      </form>
+  
+      <div id="alert"><span id="alert-text"></span></div>
+    </section>
+  </main>
+
+<script src="homepage_ad.js" defer></script>
+</body>
+</html>
